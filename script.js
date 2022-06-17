@@ -1,25 +1,28 @@
 UI.AddSubTab(["Rage", "SUBTAB_MGR"], "Delusion");
+UI.AddSubTab(["Rage", "SUBTAB_MGR"], "      Rage");
 UI.AddSubTab(["Rage", "SUBTAB_MGR"], "      Anti-Aim");
 UI.AddSubTab(["Rage", "SUBTAB_MGR"], "      Visual");
-UI.AddSubTab(["Rage", "SUBTAB_MGR"], "      Misc");
 
 const menu_handle = {};
 const helper = {};
 const freestand = {};
 const antiaim = {};
 const anti_bruteforce = {};
+const rage = {};
 const font = {};
 const color = {};
 const animation = {};
 const draw = {};
+const config = {};
 
 // MENU
 menu_handle.elements = {};
+menu_handle.elements["config"] = {};
 menu_handle.elements["antiaim"] = {};
-menu_handle.elements["antiaim"]["general"] = {};
-menu_handle.elements["antiaim"]["builder"] = {};
-menu_handle.elements["antiaim"]["anti-bruteforce"] = {};
+menu_handle.elements["rage"] = {};
 menu_handle.elements["visuals"] = {};
+
+config.elements = {};
 
 menu_handle.AddCheckbox = function(path, name) 
 {
@@ -53,47 +56,59 @@ menu_handle.AddColorPicker = function(path, name)
 
 menu_handle.create = function()
 {
+    const antiaim_path = ["Rage", "      Anti-Aim", "      Anti-Aim"];
+    const rage_path = ["Rage", "      Rage", "      Rage"];
+    const visual_path = ["Rage", "      Visual", "      Visual"];
+
+    // CONFIG
+    menu_handle.elements["config"]["save"] = menu_handle.AddCheckbox(["Rage", "Delusion", "Delusion"], "Save Config");
+    menu_handle.elements["config"]["load"] = menu_handle.AddCheckbox(["Rage", "Delusion", "Delusion"], "Load Config");
+
     // ANTI AIM
     // BUILDER
     const states = ["Shared", "Stand", "Walk", "Slow", "Crouch", "Air"];
 
-    menu_handle.elements["antiaim"]["main"] = menu_handle.AddDropdown(["Rage", "      Anti-Aim", "      Anti-Aim"], "Controller", ["General","Builder", "Anti-Bruteforce"], 0);
-    menu_handle.elements["antiaim"]["builder"]["states"] = menu_handle.AddDropdown(["Rage", "      Anti-Aim", "      Anti-Aim"], "Condition", states, 0);
+    menu_handle.elements["antiaim"]["main"] = menu_handle.AddDropdown(antiaim_path, "Controller", ["General", "Builder", "Anti-Bruteforce"], 0);
+    menu_handle.elements["antiaim"]["states"] = menu_handle.AddDropdown(antiaim_path, "Condition", states, 0);
     
     for (var i = 0; i < states.length; i++)
     {
         if (states[i] != "Shared")
         {
-            menu_handle.elements["antiaim"]["builder"]["enable_" + states[i].toLowerCase()] = menu_handle.AddCheckbox(["Rage", "      Anti-Aim", "      Anti-Aim"], "Enable " + states[i]);
+            menu_handle.elements["antiaim"]["enable_" + states[i].toLowerCase()] = menu_handle.AddCheckbox(antiaim_path, "Enable " + states[i]);
         }
 
-        menu_handle.elements["antiaim"]["builder"]["right_yaw_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" - Right ]  Yaw", -180, 180);
-        menu_handle.elements["antiaim"]["builder"]["left_yaw_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" - Left ]  Yaw", -180, 180);
-        menu_handle.elements["antiaim"]["builder"]["jitter_yaw_" + states[i].toLowerCase()] = menu_handle.AddDropdown(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" ]  Jitter Yaw", ["Off", "Offset", "Synced"], 0);
-        menu_handle.elements["antiaim"]["builder"]["jitter_yaw_value_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" ]  Jitter Value", -180, 180);
-        menu_handle.elements["antiaim"]["builder"]["right_fake_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" - Right ]  Fake", 0, 60);
-        menu_handle.elements["antiaim"]["builder"]["left_fake_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" - Left ]  Fake", 0, 60);
-        menu_handle.elements["antiaim"]["builder"]["jitter_fake_" + states[i].toLowerCase()] = menu_handle.AddCheckbox(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ " + states[i] +" ]  Jitter Fake");
+        menu_handle.elements["antiaim"]["right_yaw_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(antiaim_path, "[ " + states[i] +" - Right ]  Yaw", -180, 180);
+        menu_handle.elements["antiaim"]["left_yaw_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(antiaim_path, "[ " + states[i] +" - Left ]  Yaw", -180, 180);
+        menu_handle.elements["antiaim"]["jitter_yaw_" + states[i].toLowerCase()] = menu_handle.AddDropdown(antiaim_path, "[ " + states[i] +" ]  Jitter Yaw", ["Off", "Offset", "Synced"], 0);
+        menu_handle.elements["antiaim"]["jitter_yaw_value_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(antiaim_path, "[ " + states[i] +" ]  Jitter Value", -180, 180);
+        menu_handle.elements["antiaim"]["right_fake_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(antiaim_path, "[ " + states[i] +" - Right ]  Fake", 0, 60);
+        menu_handle.elements["antiaim"]["left_fake_" + states[i].toLowerCase()] = menu_handle.AddSliderInt(antiaim_path, "[ " + states[i] +" - Left ]  Fake", 0, 60);
+        menu_handle.elements["antiaim"]["jitter_fake_" + states[i].toLowerCase()] = menu_handle.AddCheckbox(antiaim_path, "[ " + states[i] +" ]  Jitter Fake");
+        menu_handle.elements["antiaim"]["auto_dir_" + states[i].toLowerCase()] = menu_handle.AddCheckbox(antiaim_path, "[ " + states[i] +" ]  Auto Direction");
     }
 
     // ANTI-BRUTEFORCE
     const phase = ["2", "3", "4", "5", "6"];
 
-    menu_handle.elements["antiaim"]["anti-bruteforce"]["enable_phase"] = menu_handle.AddCheckbox(["Rage", "      Anti-Aim", "      Anti-Aim"], "Enable Anti-Bruteforce");
-    menu_handle.elements["antiaim"]["anti-bruteforce"]["phase"] = menu_handle.AddDropdown(["Rage", "      Anti-Aim", "      Anti-Aim"], "Phase number", phase, 0);
-    menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_1"] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ Phase 1 ]  Value", -60, 60);
+    menu_handle.elements["antiaim"]["enable_phase"] = menu_handle.AddCheckbox(antiaim_path, "Enable Anti-Bruteforce");
+    menu_handle.elements["antiaim"]["phase"] = menu_handle.AddDropdown(antiaim_path, "Phase number", phase, 0);
+    menu_handle.elements["antiaim"]["phase_1"] = menu_handle.AddSliderInt(antiaim_path, "[ Phase 1 ]  Value", -60, 60);
 
     for (var i = 0; i < phase.length; i++)
     {
-        menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + phase[i]] = menu_handle.AddSliderInt(["Rage", "      Anti-Aim", "      Anti-Aim"], "[ Phase " + phase[i] +" ]  Value", -60, 60);
+        menu_handle.elements["antiaim"]["phase_" + phase[i]] = menu_handle.AddSliderInt(antiaim_path, "[ Phase " + phase[i] +" ]  Value", -60, 60);
     }
 
+    // RAGE
+    menu_handle.elements["rage"]["doubletap"] = menu_handle.AddMultiDropdown(rage_path, "Doubletap Options", ["Instant", "Faster Recharge"]);
+
     // VISUALS
-    menu_handle.elements["visuals"]["colorpicker"] = menu_handle.AddColorPicker(["Rage", "      Visual", "      Visual"], "Accent Color");
-    menu_handle.elements["visuals"]["gui_scale"] = menu_handle.AddDropdown(["Rage", "      Visual", "      Visual"], "GUI Scale", ["75%%", "100%%", "125%%"], 0);
-    menu_handle.elements["visuals"]["indicator"] = menu_handle.AddMultiDropdown(["Rage", "      Visual", "      Visual"], "Display Indicator", ["Indicator", "Hotkey", "Anti-Bruteforce Timer"]);
-    menu_handle.elements["visuals"]["information"] = menu_handle.AddMultiDropdown(["Rage", "      Visual", "      Visual"], "Display Information", ["Slowed Down", "Ping Carried Enemy"]);
-    menu_handle.elements["visuals"]["avoid_scope"] = menu_handle.AddCheckbox(["Rage", "      Visual", "      Visual"], "Avoid Scope Lines");
+    menu_handle.elements["visuals"]["colorpicker"] = menu_handle.AddColorPicker(visual_path, "Accent Color");
+    menu_handle.elements["visuals"]["gui_scale"] = menu_handle.AddDropdown(visual_path, "GUI Scale", ["75%%", "100%%", "125%%"], 0);
+    menu_handle.elements["visuals"]["indicator"] = menu_handle.AddMultiDropdown(visual_path, "Display Indicator", ["Indicator", "Hotkey", "Anti-Bruteforce Timer"]);
+    menu_handle.elements["visuals"]["information"] = menu_handle.AddMultiDropdown(visual_path, "Display Information", ["Slowed Down", "Ping Carried Enemy"]);
+    menu_handle.elements["visuals"]["avoid_scope"] = menu_handle.AddCheckbox(visual_path, "Avoid Scope Lines");
 }
 menu_handle.create();
 
@@ -104,38 +119,39 @@ menu_handle.visibility = function()
 
     for (var i = 0; i < states.length; i++)
     {
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["states"], (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["states"], (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) ? 1 : 0);
 
         var visible = undefined;
 
         if (states[i] != "Shared")
         {
-            visible = (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_" + states[i].toLowerCase()]) == true) && (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) && (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["states"]) == i);
-            UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["enable_" + states[i].toLowerCase()], (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["states"]) == i) && (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) ? 1 : 0);
+            visible = UI.GetValue(menu_handle.elements["antiaim"]["enable_" + states[i].toLowerCase()]) && (UI.GetValue(menu_handle.elements["antiaim"]["states"]) == i) && (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1);
+            UI.SetEnabled(menu_handle.elements["antiaim"]["enable_" + states[i].toLowerCase()], (UI.GetValue(menu_handle.elements["antiaim"]["states"]) == i) && (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) ? 1 : 0);
         }
         else
-            visible = (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) && (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["states"]) == i);
+            visible = (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 1) && (UI.GetValue(menu_handle.elements["antiaim"]["states"]) == i);
 
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["right_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["left_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_value_" + states[i].toLowerCase()], visible && (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_" + states[i].toLowerCase()]) != 0) ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["right_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["left_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["builder"]["jitter_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["right_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["left_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["jitter_yaw_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["jitter_yaw_value_" + states[i].toLowerCase()], visible && (UI.GetValue(menu_handle.elements["antiaim"]["jitter_yaw_" + states[i].toLowerCase()]) != 0) ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["right_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["left_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["jitter_fake_" + states[i].toLowerCase()], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["auto_dir_" + states[i].toLowerCase()], visible ? 1 : 0);
     }
 
     const phase = ["2", "3", "4", "5", "6"];
-    const phase_number = UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase"]) + 2;
+    const phase_number = UI.GetValue(menu_handle.elements["antiaim"]["phase"]) + 2;
 
     for (var i = 0; i < phase.length; i++)
     {
-        const visible = (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 2) && (UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["enable_phase"]) == true);
+        const visible = (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 2) && UI.GetValue(menu_handle.elements["antiaim"]["enable_phase"]);
         
-        UI.SetEnabled(menu_handle.elements["antiaim"]["anti-bruteforce"]["enable_phase"], (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 2) ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase"], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_1"], visible ? 1 : 0);
-        UI.SetEnabled(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + phase[i]], visible && (phase[i] <= phase_number) ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["enable_phase"], (UI.GetValue(menu_handle.elements["antiaim"]["main"]) == 2) ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["phase"], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["phase_1"], visible ? 1 : 0);
+        UI.SetEnabled(menu_handle.elements["antiaim"]["phase_" + phase[i]], visible && (phase[i] <= phase_number) ? 1 : 0);
     }
 }
 
@@ -212,7 +228,9 @@ helper.get_velocity = function(ent)
     const x = Entity.GetProp(ent, "CBasePlayer", "m_vecVelocity[0]")[0];
     const y = Entity.GetProp(ent, "CBasePlayer", "m_vecVelocity[0]")[1];
     const z = Entity.GetProp(ent, "CBasePlayer", "m_vecVelocity[0]")[2];
-	if (x == 0) return;
+
+	if (x == 0) 
+        return;
 
 	return Math.sqrt(x*x + y*y + z*z);
 }
@@ -322,7 +340,7 @@ freestand.closest_enemy = function()
 
     for (var i = 0; i < enemies.length; i++) 
     {
-        if (Entity.IsValid(enemies[i]) == true && Entity.IsAlive(enemies[i]) == true && Entity.IsDormant(enemies[i]) == false) 
+        if (Entity.IsValid(enemies[i]) && Entity.IsAlive(enemies[i]) && !Entity.IsDormant(enemies[i])) 
         {
             const cur = Entity.GetProp(enemies[i], "CBaseEntity", "m_vecOrigin");
             const cur_fov = Math.abs(helper.normalise_angle(helper.angle_on_screen(local_eyepos[0] - cur[0], local_eyepos[1] - cur[1]) - view_angles[1] + 180));
@@ -371,7 +389,8 @@ freestand.best_angle = function()
 
             const bullet = Trace.Bullet(local_player, freestand.target, point, head_position);
 
-            if (!bullet) continue;
+            if (!bullet) 
+                continue;
 
             data.damages[i] = bullet[1];
         }
@@ -382,11 +401,13 @@ freestand.best_angle = function()
             freestand.side = -1;
     }
 
-    if (freestand.side) return;
+    if (freestand.side) 
+        return;
 
     for (var i = eye_angles - 180; i < eye_angles + 180; i += 180 / 12) 
     {
-        if (i === eye_angles) continue;
+        if (i === eye_angles) 
+            continue;
 
         const rotation = helper.degree_to_radian(i);
 
@@ -397,7 +418,9 @@ freestand.best_angle = function()
         ];
 
         const line = Trace.Line(local_player, eye_position, point);
-        if (!line) continue;
+
+        if (!line) 
+            continue;
 
         data.fractions[i > eye_angles ? "right" : "left"] += line[1];
     }
@@ -412,7 +435,8 @@ freestand.update = function ()
 {
     const local_player = Entity.GetLocalPlayer();
 
-    if (!local_player || !Entity.IsAlive(local_player)) return;
+    if (!local_player || !Entity.IsAlive(local_player)) 
+        return;
 
     freestand.closest_enemy();
     freestand.best_angle();
@@ -452,15 +476,15 @@ antiaim.current_condition = function()
     var state = undefined;
 
     if (antiaim.condition["air"]())
-        state = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_air"]) == true ? "air" : "shared";
+        state = UI.GetValue(menu_handle.elements["antiaim"]["enable_air"]) ? "air" : "shared";
     else if (antiaim.condition["crouch"]())
-        state = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_crouch"]) == true ? "crouch" : "shared";
+        state = UI.GetValue(menu_handle.elements["antiaim"]["enable_crouch"]) ? "crouch" : "shared";
     else if (antiaim.condition["slow"]())
-        state = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_slow"]) == true ? "slow" : "shared";
+        state = UI.GetValue(menu_handle.elements["antiaim"]["enable_slow"]) ? "slow" : "shared";
     else if (antiaim.condition["walk"]())
-        state = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_walk"]) == true ? "walk" : "shared";
+        state = UI.GetValue(menu_handle.elements["antiaim"]["enable_walk"]) ? "walk" : "shared";
     else
-        state = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["enable_stand"]) == true ? "stand" : "shared";
+        state = UI.GetValue(menu_handle.elements["antiaim"]["enable_stand"]) ? "stand" : "shared";
 
     return state;
 }
@@ -472,7 +496,9 @@ antiaim.offsets.current_yaw = 0;
 antiaim.controller = function()
 {
     const local_player = Entity.GetLocalPlayer();
-    if (!local_player || !Entity.IsAlive(local_player)) return;
+
+    if (!local_player || !Entity.IsAlive(local_player))
+        return;
 
     const states = ["Shared", "Stand", "Walk", "Slow", "Crouch", "Air"];
     const current_state = antiaim.current_condition();
@@ -495,11 +521,13 @@ antiaim.controller = function()
             }
         
             var yaw_jitter = 0;
-            var yaw_jitter_value = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_value_" + state]);
+            var yaw_jitter_value = UI.GetValue(menu_handle.elements["antiaim"]["jitter_yaw_value_" + state]);
         
-            const is_bruteforce = helper.clamp((anti_bruteforce.reset_time - Globals.Realtime()) / anti_bruteforce.timer, 0, 1) > 0;
+            const is_auto_dir = UI.GetValue(menu_handle.elements["antiaim"]["auto_dir_" + state]);
+            anti_bruteforce.state = helper.clamp((anti_bruteforce.reset_time - Globals.Realtime()) / anti_bruteforce.timer, 0, 1) > 0;
+            anti_bruteforce.remaining_time = helper.clamp((anti_bruteforce.reset_time - Globals.Realtime()) / anti_bruteforce.timer, 0, 1);
         
-            if (is_bruteforce) 
+            if (anti_bruteforce.state) 
             {
                 freestand.side = anti_bruteforce.angle > 0 ? 1 : -1;
             }
@@ -507,25 +535,25 @@ antiaim.controller = function()
             if (Globals.ChokedCommands() == 0) 
             {
                 antiaim.offsets[state].yaw_jitter = !antiaim.offsets[state].yaw_jitter;
-                antiaim.offsets[state].desync_jitter = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["jitter_fake_" + state]) == true ? !antiaim.offsets[state].desync_jitter : false;
+                antiaim.offsets[state].desync_jitter = UI.GetValue(menu_handle.elements["antiaim"]["jitter_fake_" + state]) ? Globals.Tickcount() % 4 > 2 : false;
         
                 if (freestand.side == -1) 
                 {
-                    antiaim.offsets[state].yaw_override = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["left_yaw_" + state]);
-                    antiaim.offsets[state].desync_override = antiaim.offsets[state].desync_jitter ? -18 : -UI.GetValue(menu_handle.elements["antiaim"]["builder"]["left_fake_" + state]);
+                    antiaim.offsets[state].yaw_override = UI.GetValue(menu_handle.elements["antiaim"]["left_yaw_" + state]);
+                    antiaim.offsets[state].desync_override = antiaim.offsets[state].desync_jitter ? -18 : -UI.GetValue(menu_handle.elements["antiaim"]["left_fake_" + state]);
                 }
                 else
                 {
-                    antiaim.offsets[state].yaw_override = UI.GetValue(menu_handle.elements["antiaim"]["builder"]["right_yaw_" + state]);
-                    antiaim.offsets[state].desync_override = antiaim.offsets[state].desync_jitter ? 18 : UI.GetValue(menu_handle.elements["antiaim"]["builder"]["right_fake_" + state]);
+                    antiaim.offsets[state].yaw_override = UI.GetValue(menu_handle.elements["antiaim"]["right_yaw_" + state]);
+                    antiaim.offsets[state].desync_override = antiaim.offsets[state].desync_jitter ? 18 : UI.GetValue(menu_handle.elements["antiaim"]["right_fake_" + state]);
                 }
             }
 
-            if (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_" + state]) == 1)
+            if (UI.GetValue(menu_handle.elements["antiaim"]["jitter_yaw_" + state]) == 1)
             {
                 yaw_jitter = antiaim.offsets[state].yaw_jitter ? 0 : yaw_jitter_value;
             }
-            else if (UI.GetValue(menu_handle.elements["antiaim"]["builder"]["jitter_yaw_" + state]) == 2)
+            else if (UI.GetValue(menu_handle.elements["antiaim"]["jitter_yaw_" + state]) == 2)
             {
                 yaw_jitter = antiaim.offsets[state].yaw_jitter ? -yaw_jitter_value / 2 : yaw_jitter_value / 2;
             }
@@ -535,7 +563,7 @@ antiaim.controller = function()
                 antiaim.offsets[state].yaw_jitter = false;
             }
             
-            if (is_bruteforce) 
+            if (anti_bruteforce.state) 
                 antiaim.offsets[state].desync_override = anti_bruteforce.angle;
         
             antiaim.offsets.current_desync = antiaim.offsets[state].desync_override;
@@ -543,6 +571,7 @@ antiaim.controller = function()
 
             AntiAim.SetRealOffset(antiaim.offsets.current_desync);
             UI.SetValue(["Rage", "Anti Aim", "Directions", "Yaw offset"], antiaim.offsets.current_yaw);
+            UI.SetValue(["Rage", "Anti Aim", "Directions", "Auto direction"], is_auto_dir);
         }
     }
 }
@@ -556,26 +585,29 @@ anti_bruteforce =
     work_distance : 75,
     timer : 5,
     current_phase : 1,
-    angle : 0
+    angle : 0,
+    remaining_time : 0
 };
 
 anti_bruteforce.bullet_impact = function(impact_vector, enemy_eye_position, eye_position) 
 {
     const distance = helper.dist_to(helper.closest_point_on_ray(impact_vector, enemy_eye_position, eye_position), eye_position);
-    if (distance > anti_bruteforce.work_distance) return;
+    
+    if (distance > anti_bruteforce.work_distance) 
+        return;
 
-    const phase_number = UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase"]) + 2;
+    const phase_number = UI.GetValue(menu_handle.elements["antiaim"]["phase"]) + 2;
 
     if (anti_bruteforce.reset_time < Globals.Realtime())
     {
         for (i = 1; i <= phase_number; i++) 
         {
-            if (antiaim.offsets.current_desync < 0 && UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + i]) >= 0)
+            if (antiaim.offsets.current_desync < 0 && UI.GetValue(menu_handle.elements["antiaim"]["phase_" + i]) >= 0)
             {
                 anti_bruteforce.current_phase = i;
                 break;
             } 
-            else if (antiaim.offsets.current_desync > 0 && UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + i]) < 0)
+            else if (antiaim.offsets.current_desync > 0 && UI.GetValue(menu_handle.elements["antiaim"]["phase_" + i]) < 0)
             {
                 anti_bruteforce.current_phase = i;
                 break;
@@ -586,12 +618,12 @@ anti_bruteforce.bullet_impact = function(impact_vector, enemy_eye_position, eye_
         anti_bruteforce.current_phase = 1 + (anti_bruteforce.current_phase % phase_number);
 
     anti_bruteforce.reset_time = Globals.Realtime() + anti_bruteforce.timer;
-    anti_bruteforce.angle = UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + anti_bruteforce.current_phase]);
+    anti_bruteforce.angle = UI.GetValue(menu_handle.elements["antiaim"]["phase_" + anti_bruteforce.current_phase]);
 
     while (anti_bruteforce.angle == null)
     {
         anti_bruteforce.current_phase = 1 + (anti_bruteforce.current_phase % phase_number);
-        anti_bruteforce.angle = UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["phase_" + anti_bruteforce.current_phase]);
+        anti_bruteforce.angle = UI.GetValue(menu_handle.elements["antiaim"]["phase_" + anti_bruteforce.current_phase]);
     }
 
     anti_bruteforce.last_tick_triggered = Globals.Tickcount();
@@ -599,39 +631,122 @@ anti_bruteforce.bullet_impact = function(impact_vector, enemy_eye_position, eye_
 
 anti_bruteforce.pre_bullet_impact = function() 
 {
-    if (UI.GetValue(menu_handle.elements["antiaim"]["anti-bruteforce"]["enable_phase"]) == false) return;
+    if (!UI.GetValue(menu_handle.elements["antiaim"]["enable_phase"])) 
+        return;
     
-    if (anti_bruteforce.last_tick_triggered == Globals.Tickcount()) return;
+    if (anti_bruteforce.last_tick_triggered == Globals.Tickcount()) 
+        return;
 
     const local_player = Entity.GetLocalPlayer();
-    if (!local_player) return;
+    if (!local_player) 
+        return;
 
     const health = Entity.GetProp(local_player, 'CBasePlayer', 'm_iHealth');
-    if (!health || health < 1) return;
+    if (!health || health < 1) 
+        return;
 
     const userid = Event.GetInt('userid');
-    if(!userid) return;
+    if(!userid)
+        return;
 
     const enemy = Entity.GetEntityFromUserID(userid);
-    if (!enemy) return;
+    if (!enemy) 
+        return;
 
-    if (Entity.IsDormant(enemy) || Entity.IsTeammate(enemy)) return;
+    if (Entity.IsDormant(enemy) || Entity.IsTeammate(enemy)) 
+        return;
 
     const local_eyepos = Entity.GetEyePosition(local_player);
-    if (!local_eyepos) return;
+    if (!local_eyepos) 
+        return;
 
     const enemy_eyepos = Entity.GetEyePosition(enemy);
-    if (!enemy_eyepos) return;
+    if (!enemy_eyepos) 
+        return;
 
     const x = Event.GetInt('x');
     const y = Event.GetInt('y');
     const z = Event.GetInt('z');
 
-    if (!x || !y || !z) return;
+    if (!x || !y || !z) 
+        return;
 
     const impact_vector = [x, y, z];
 
     return anti_bruteforce.bullet_impact(impact_vector, enemy_eyepos, local_eyepos);
+}
+
+// RAGE
+rage = 
+{
+    dt_settings : false
+};
+
+rage.can_shift_shot = function(ticks_to_shift)
+{
+    const local_player = Entity.GetLocalPlayer();
+    const weapon = Entity.GetWeapon(local_player);
+
+    if (local_player == null || weapon == null)
+        return false;
+
+    var tickbase = Entity.GetProp(local_player, "CCSPlayer", "m_nTickBase");
+    var curtime = Globals.TickInterval() * (tickbase - ticks_to_shift)
+
+    if (curtime < Entity.GetProp(local_player, "CCSPlayer", "m_flNextAttack"))
+        return false;
+
+    if (curtime < Entity.GetProp(weapon, "CBaseCombatWeapon", "m_flNextPrimaryAttack"))
+        return false;
+
+    return true;
+}
+
+rage.doubletap = function()
+{
+    const doubletap_option = UI.GetValue(["Rage", "      Rage", "      Rage", "Doubletap Options"]);
+    const is_charged = Exploit.GetCharge();
+
+    if (doubletap_option & (1 << 1))
+    {
+        Exploit[(is_charged != 1 ? "Enable" : "Disable") + "Recharge"]();
+
+        if (rage.can_shift_shot(14) && is_charged != 1) 
+        {
+            Exploit.DisableRecharge();
+            Exploit.Recharge();
+        }
+    }
+    else
+        Exploit.EnableRecharge();
+
+    if (doubletap_option & (1 << 0))
+    {
+        if (!rage.dt_settings)
+        {
+            Exploit.OverrideShift(14);
+            Exploit.OverrideTolerance(0);
+            
+            rage.dt_settings = true;
+        }
+    }
+    else
+    {
+        if (rage.dt_settings)
+        {
+            Exploit.OverrideShift(12);
+            Exploit.OverrideTolerance(2);
+
+            rage.dt_settings = false;
+        }
+    }
+}
+
+rage.controller = function()
+{
+    const local_player = Entity.GetLocalPlayer();
+
+    rage.doubletap();
 }
 
 // FONT
@@ -756,18 +871,18 @@ animation.extend = function(value)
 }
 
 // DRAW
+draw = {
+    render_scale : 0
+}
+
 draw.string_outline = function(x, y, center, text, color, outline_alpha, font)
 {
-    Render.String(x - 1, y - 1, center, text, [0,0,0,outline_alpha], font);
-    Render.String(x - 1, y, center, text, [0,0,0,outline_alpha], font);
-    Render.String(x - 1, y + 1, center, text, [0,0,0,outline_alpha], font);
+    const xy = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
 
-    Render.String(x, y - 1, center, text, [0,0,0,outline_alpha], font);
-    Render.String(x, y + 1, center, text, [0,0,0,outline_alpha], font);
-
-    Render.String(x + 1, y - 1, center, text, [0,0,0,outline_alpha], font);
-    Render.String(x + 1, y, center, text, [0,0,0,outline_alpha], font);
-    Render.String(x + 1, y + 1, center, text, [0,0,0,outline_alpha], font);
+    for (var i = 0; i < xy.length; i++)
+    {
+        Render.String(x + xy[i][0], y - xy[i][1], center, text, [0,0,0,outline_alpha], font);
+    }
 
     Render.String(x, y, center, text, color, font);
 }
@@ -784,7 +899,8 @@ draw.controller = function()
 {
     const local_player = Entity.GetLocalPlayer();
 
-    if (!local_player || !Entity.IsAlive(local_player)) return;
+    if (!local_player || !Entity.IsAlive(local_player))
+        return;
 
     animation.update()
     animation.non_lerp_offset = animation.start_offset
@@ -796,18 +912,19 @@ draw.controller = function()
     const accent_color = UI.GetColor(menu_handle.elements["visuals"]["colorpicker"]);
 
     const is_scoped = Entity.GetProp(local_player, "CCSPlayer", "m_bIsScoped");
-    const is_scoped_value = animation.new("is_scoped", is_scoped && UI.GetValue(menu_handle.elements["visuals"]["avoid_scope"]) == true ? 1 : 0);
+    const is_scoped_value = animation.new("is_scoped", is_scoped && UI.GetValue(menu_handle.elements["visuals"]["avoid_scope"]) ? 1 : 0);
 
     const gui_scale = UI.GetValue(menu_handle.elements["visuals"]["gui_scale"]);
-    var text_scale = 0;
 
     if (gui_scale == 0)
-        text_scale = -3;
+        draw.render_scale = -3;
     else if (gui_scale == 2)
-        text_scale = 3;  
+        draw.render_scale = 3;  
+    else
+        draw.render_scale = 0; 
     
     const script_name = "delusion";
-    const script_name_size = Render.TextSize(script_name, font["Verdana"](12 + text_scale));
+    const script_name_size = Render.TextSize(script_name, font["Verdana"](12 + draw.render_scale));
     const script_name_spacing = 0;
 
     // SCRIPT NAME ANIMATION
@@ -817,11 +934,11 @@ draw.controller = function()
         {
             const pulse = Math.sin(Math.abs(-Math.PI + ((Globals.Realtime() + char / 10) * (1 / 0.5)) % (Math.PI * 2))) * 255;
     
-            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value) + 1, screen_size[1] / 2 + text_scale + 18, 0, script_name[char], color["black"](255), font["Verdana"](12 + text_scale));
-            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + text_scale + 17, 0, script_name[char], color["white"](255), font["Verdana"](12 + text_scale));
-            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + text_scale + 17, 0, script_name[char], [accent_color[0], accent_color[1], accent_color[2], pulse], font["Verdana"](12 + text_scale));
+            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value) + 1, screen_size[1] / 2 + draw.render_scale + 18, 0, script_name[char], color["black"](255), font["Verdana"](12 + draw.render_scale));
+            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + draw.render_scale + 17, 0, script_name[char], color["white"](255), font["Verdana"](12 + draw.render_scale));
+            Render.String(screen_size[0] / 2 - script_name_size[0] / 2 + script_name_spacing + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + draw.render_scale + 17, 0, script_name[char], [accent_color[0], accent_color[1], accent_color[2], pulse], font["Verdana"](12 + draw.render_scale));
     
-            script_name_spacing += Render.TextSize(script_name[char], font["Verdana"](12 + text_scale))[0];
+            script_name_spacing += Render.TextSize(script_name[char], font["Verdana"](12 + draw.render_scale))[0];
         }
         animation.extend(script_name_size[1] + 10);
     }
@@ -829,20 +946,14 @@ draw.controller = function()
     // ANTI-BRUTEFORCE TIMER
     if (multi_ind & (1 << 2))
     {
-        const brute_time = helper.clamp((anti_bruteforce.reset_time - Globals.Realtime()) / anti_bruteforce.timer, 0, 1);
+        const state  = animation.new('antibrute_line', anti_bruteforce.state ? 1 : 0);
 
-        if (brute_time > 0)
-            animation.new('antibrute_line', 1);
-
-        const brute_anim = animation.get('antibrute_line').number;
-        const is_brute = brute_anim > 0;
-
-        if (is_brute)
+        if (anti_bruteforce.state)
         {
-            Render.FilledRect(screen_size[0] / 2 - script_name_size[0] / 2 + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + animation.extend() + text_scale - 4, script_name_size[0] + 1, (gui_scale == 1 || gui_scale == 0) ? 3 : 4, [25, 25, 25, Math.round(150 * brute_anim)]);
-            Render.FilledRect(screen_size[0] / 2 - script_name_size[0] / 2 + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value) + 1, screen_size[1] / 2 + animation.extend() + text_scale - 3, Math.round(script_name_size[0] * brute_time), (gui_scale == 1 || gui_scale == 0) ? 1 : 2, [255, 255, 255, Math.round(255 * brute_anim)]);
+            Render.FilledRect(screen_size[0] / 2 - script_name_size[0] / 2 + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + animation.extend() + draw.render_scale - 4, script_name_size[0] + 1, (gui_scale == 1 || gui_scale == 0) ? 3 : 4, [25, 25, 25, Math.round(150 * state)]);
+            Render.FilledRect(screen_size[0] / 2 - script_name_size[0] / 2 + Math.round((script_name_size[0] + 20) / 2 * is_scoped_value) + 1, screen_size[1] / 2 + animation.extend() + draw.render_scale - 3, script_name_size[0] * anti_bruteforce.remaining_time, (gui_scale == 1 || gui_scale == 0) ? 1 : 2, [255, 255, 255, Math.round(255 * state)]);
     
-            animation.extend(Math.round(brute_anim * 3));
+            animation.extend(Math.round(state * 3));
         }
     }
 
@@ -853,9 +964,9 @@ draw.controller = function()
         {
             draw["indicators"][value].state = animation.new(value, draw["indicators"][value].call() ? 1 : 0);
 
-            const name_size = Render.TextSize(value, font["Tahoma"](10 + text_scale));
+            const name_size = Render.TextSize(value, font["Tahoma"](10 + draw.render_scale));
 
-            draw.string_outline(screen_size[0] / 2  + Math.round((name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + animation.extend() + text_scale -3, 1, value, color["white"](Math.round(255 * draw["indicators"][value].state)), Math.round(255 * draw["indicators"][value].state), font["Tahoma"](10 + text_scale));
+            draw.string_outline(screen_size[0] / 2  + Math.round((name_size[0] + 20) / 2 * is_scoped_value), screen_size[1] / 2 + animation.extend() + draw.render_scale -3, 1, value, color["white"](Math.round(255 * draw["indicators"][value].state)), Math.round(255 * draw["indicators"][value].state), font["Tahoma"](10 + draw.render_scale));
     
             animation.extend(Math.round(name_size[1] * draw["indicators"][value].state));
         }
@@ -890,25 +1001,19 @@ draw.controller = function()
         for (var i = 0; i < enemies.length; i++)
         {
             const enemy = enemies[i]
-
-            if (Entity.IsValid(enemy) == true && Entity.IsAlive(enemy) == true && Entity.IsDormant(enemy) == false && Entity.IsBot(enemy) == false) 
+            
+            if (Entity.IsValid(enemy) && Entity.IsAlive(enemy) && !Entity.IsDormant(enemy) && !Entity.IsBot(enemy)) 
             {
                 const ping_enemy = Math.round(Entity.GetProp(enemy, "CPlayerResource", "m_iPing"));
 
                 if (ping > ping_enemy)
                 {
-                    enemy_hitpos = Entity.GetRenderOrigin(enemy);
-                    local_hitpos = Entity.GetRenderOrigin(local_player);
-
-                    var dist = helper.dist_to(local_hitpos, enemy_hitpos);
-
-                    enemy_hitpos[2] = enemy_hitpos[2] + (74 + text_scale) + dist / 30;
-                    enemy_pos = Render.WorldToScreen(enemy_hitpos);
+                    const box = Entity.GetRenderBox(enemy);
                     
-                    if (enemy_pos[2] == 1)
+                    if (box[0])
                     {
-                        Render.String(enemy_pos[0] + 1, enemy_pos[1] + 1, 1, "PING CARRIED (" + ping_enemy + ")", color["black"](255), font["VerdanaB"](7 + text_scale));
-                        Render.String(enemy_pos[0], enemy_pos[1], 1, "PING CARRIED (" + ping_enemy + ")", color["red"](255), font["VerdanaB"](7 + text_scale));
+                        Render.String(box[1] + (box[3] - box[1]) / 2 + 1, box[2] - 25 + 1, 1, "PING CARRIED (" + ping_enemy + ")", color["black"](255), font["VerdanaB"](6 + draw.render_scale));
+                        Render.String(box[1] + (box[3] - box[1]) / 2, box[2] - 25, 1, "PING CARRIED (" + ping_enemy + ")", color["red"](255), font["VerdanaB"](6 + draw.render_scale));
                     }
                 }
             }
@@ -916,17 +1021,91 @@ draw.controller = function()
     }
 }
 
+// CONFIG
+config.parse = function()
+{
+    if (UI.GetValue(menu_handle.elements["config"]["save"]))
+    {
+        for (j in menu_handle.elements)
+        {
+            if (j == "config")
+                continue;
+
+            for (i in menu_handle.elements[j])
+            {
+                if (i == "main" || i == "states")
+                    continue;
+
+                var value = UI.GetColor(menu_handle.elements[j][i]);
+
+                if (value == undefined)
+                    value = UI.GetValue(menu_handle.elements[j][i]);
+
+                if (value == null || value == undefined)
+                    continue;
+
+                DataFile.SetKey("config.delusion", i, JSON.stringify(value));
+            }
+        }
+
+        DataFile.Save("config.delusion");
+
+        Cheat.PrintLog("Configuration saved.", [255,255,255,255]);
+
+        UI.SetValue(menu_handle.elements["config"]["save"], 0);
+    }   
+}
+
+config.load = function()
+{
+    DataFile.Load("config.delusion");
+
+    if (UI.GetValue(menu_handle.elements["config"]["load"]))
+    {
+        for (j in menu_handle.elements)
+        {
+            if (j == "config")
+                continue;
+
+            for (i in menu_handle.elements[j])
+            {
+                if (i == "main" || i == "states")
+                    continue;
+
+                const string = JSON.parse(DataFile.GetKey("config.delusion", i));
+
+                if (typeof(string) == "object")
+                    UI.SetColor(menu_handle.elements[j][i], string);
+                else
+                    UI.SetValue(menu_handle.elements[j][i], string);
+            }
+        }
+
+        Cheat.PrintLog("Configuration loaded.", [255,255,255,255]);
+
+        UI.SetValue(menu_handle.elements["config"]["load"], 0);
+    }
+}
+
 const unload = function()
 {
     AntiAim.SetOverride(0);
+
+    Exploit.EnableRecharge();
+    Exploit.OverrideShift(12)
+    Exploit.OverrideTolerance(2);
 }
 
 Cheat.RegisterCallback('bullet_impact', 'anti_bruteforce.pre_bullet_impact');
 
 Cheat.RegisterCallback("CreateMove", "freestand.update");
 Cheat.RegisterCallback("CreateMove", "antiaim.controller");
+Cheat.RegisterCallback("CreateMove", "rage.controller");
 
 Cheat.RegisterCallback("Draw", "menu_handle.visibility");
 Cheat.RegisterCallback("Draw", "draw.controller");
+
+Cheat.RegisterCallback("Draw", "config.parse");
+Cheat.RegisterCallback("Draw", "config.load");
 
 Cheat.RegisterCallback("Unload", "unload");
